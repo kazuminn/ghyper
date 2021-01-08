@@ -20,7 +20,6 @@
 #include "device/keyboard.h"
 #include "queue"
 
-#define _THIS_IP_ ({ __label__ __here; __here: (unsigned long)&&__here; })
 #define DEBUG
 
 #define QUIET
@@ -53,11 +52,9 @@ typedef struct _sig_ucontext {
 
 int osType = 0;
 
-void _hoge(int i) {
-
-}
 
 void trap(int sig_num, siginfo_t * info, void * ucontext){
+		printf("hhhhhh\n");
         emu->AX = emu->EAX;
 	    emu->AL = emu->EAX;
         emu->AH = emu->EAX;
@@ -76,25 +73,13 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 
 
 		instruction_func_t* func;
-		_THIS_IP_;
 		sig_ucontext_t* uc = (sig_ucontext_t *) ucontext;
 		uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
 		uc->uc_mcontext.rip++;
 		printf("hhhhhh%x\n", *pc);
 		printf("hhhhhh%p\n", (void *)uc->uc_mcontext.rip);
-
-		/*
-		void * sp = __builtin_frame_address(0);
-		struct _sig_ucontext *context = (struct _sig_ucontext*)(sp + 1);
-		unsigned char* pc;
-		pc = (unsigned char*)context->uc_mcontext.rip;
-		context->uc_mcontext.rip++;
-
-		printf("opecode : %lx\n", __builtin_bswap64(pc));
-		*/
 		printf("opecode : %lx\n", __builtin_bswap64(*pc));
 		
-		//printf("opecode : %lx\n", _THIS_IP_);
 		func = instructions16[*pc];
 
 
@@ -160,22 +145,30 @@ if(hypervisor) {
 
     	inter = new Interrupt();
 		cout<<"emulator created."<<endl;
-
-    	emu->LoadBinary("../xv6-public/xv6.img", 0x7c00, 1024 * 1024 * 1024);
+//home/a/haribote/30_day/haribote7f/haribote/haribote.img
+//../xv6-public/xv6.img
+    	emu->LoadBinary("../haribote/30_day/harib27f/haribote/haribote.img", 0x7c00, 1024 * 1024 * 1024);
 		printf("emu->memory : %p \n", emu->memory);
 
 		struct sigaction sigact;
 
+		sigemptyset(&sigact.sa_mask);
 		sigact.sa_sigaction = trap;
 		sigact.sa_flags = SA_RESTART | SA_SIGINFO;
-		sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL);
-		sigaction(SIGILL, &sigact, (struct sigaction *)NULL);
+		int rc = sigaction(SIGILL, &sigact, (struct sigaction *)NULL);
+		if(rc == 0){
+			printf("Error : sigaction() SIGILL %s\n", strerror(errno));
+		}
+		int sc = sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL);
+		if(sc == 0){
+			printf("Error : sigaction() SIGSEGV %s\n", strerror(errno));
+		}
 
 		char buffer[500];
 		sprintf(buffer, "%p:0x7c00", emu->memory); //sory %hhn , I Know Security risc
 		printf("emu->memory : %s \n", buffer);
 		printf("emu->memory : %x \n", (emu->memory + 0x7c00)[0]);
-		_pc((uintptr_t)emu->memory, 0x7c00);
+		_pc((uintptr_t)emu->memory + 0x7c00, 0x7c00);
 
 		delete emu;
 		delete pic;
