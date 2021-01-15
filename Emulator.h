@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <unordered_map>
+#include <ucontext.h>
+#include <signal.h>
 
 #define DEFAULT_BIT_MODE	16//16		//デフォルトの起動時のビット。本来は16。
 #define REGISTERS_COUNT		8		//レジスタの本数(16/32bit)
@@ -395,15 +397,23 @@ private:
 };
 
 //instructions
+typedef struct _sig_ucontext {
+ 	unsigned long     uc_flags;
+ 	struct ucontext   *uc_link;
+ 	stack_t           uc_stack;
+ 	struct sigcontext uc_mcontext;
+ 	sigset_t          uc_sigmask;
+} sig_ucontext_t;
 
 typedef void instruction_func_t(Emulator*);	//各命令に対応した関数の型
+typedef void hinstruction_func_t(Emulator*, sig_ucontext_t*);	//各命令に対応した関数の型
 
 void InitInstructions16(void);			//16bit命令の初期化
 void InitHInstructions16(void);			//hypervisor16bit命令の初期化
 void InitInstructions32(void);			//32bit
 
 extern instruction_func_t* instructions16[0xffff];	//16bit命令の関数の配列
-extern instruction_func_t* hinstructions16[0xffff];	//hypervisor16bit命令の関数の配列
+extern hinstruction_func_t* hinstructions16[0xffff];	//hypervisor16bit命令の関数の配列
 extern instruction_func_t* instructions32[0xffff];	//32bit
 
 //eflgas

@@ -1,11 +1,12 @@
 #include "Emulator.h"
 #include "ModRM.h"
 
-instruction_func_t* hinstructions16[0xffff];
+hinstruction_func_t* hinstructions16[0xffff];
 
 namespace hinstruction16{
 
-void push_es(Emulator *emu){
+void push_es(Emulator *emu, sig_ucontext_t* uc){
+	uc->uc_mcontext.rip++;
 }
 
 }
@@ -13,7 +14,7 @@ void push_es(Emulator *emu){
 using namespace hinstruction16;
 
 void InitHInstructions16(){
-	instruction_func_t** func = hinstructions16;
+	hinstruction_func_t** func = hinstructions16;
 
     func[0x06] = push_es;
 }

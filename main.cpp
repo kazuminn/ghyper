@@ -40,15 +40,8 @@ Display		*disp;
 
 
 extern "C" void _pc(uintptr_t, int);
-extern "C" void _iret();
 
-typedef struct _sig_ucontext {
- 	unsigned long     uc_flags;
- 	struct ucontext   *uc_link;
- 	stack_t           uc_stack;
- 	struct sigcontext uc_mcontext;
- 	sigset_t          uc_sigmask;
-} sig_ucontext_t;
+
 
 int osType = 0;
 
@@ -75,7 +68,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
         inter->exec_interrupt(pic, emu);
 
 
-		instruction_func_t* func;
+		hinstruction_func_t* func;
 		sig_ucontext_t* uc = (sig_ucontext_t *) ucontext;
 		uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
 		uc->uc_mcontext.rip++;
@@ -96,7 +89,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 			exit(1);
 		}else{
 		//execute
-		func(emu);
+		func(emu, uc);
 		}
 
 
