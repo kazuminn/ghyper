@@ -52,6 +52,10 @@ typedef struct _sig_ucontext {
 
 int osType = 0;
 
+void debugtrap(int sig_num, siginfo_t * info, void * ucontext){
+		printf("x = %d\n", sig_num);
+		exit (1);
+}
 
 void trap(int sig_num, siginfo_t * info, void * ucontext){
 		printf("hhhhhh\n");
@@ -90,10 +94,11 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 #endif
 		if(func == NULL){
 			cout<<"命令("<<showbase<<(int)emu->instr.opcode<<")は実装されていません。"<<endl;
-		}
-
+		}else{
 		//execute
 		func(emu);
+		}
+
 
 		
 		if(emu->EIP > emu->GetMemSize()){
@@ -134,9 +139,6 @@ int main(int argc, char **argv){
 
 
 if(hypervisor) {
-	int p_id, status;
-	// プロセスの生成
-    if ((p_id = fork()) == 0) {
         cout << "プロセス生成" << endl;
 
 		emu = new Emulator();
@@ -151,36 +153,30 @@ if(hypervisor) {
 		printf("emu->memory : %p \n", emu->memory);
 
 		struct sigaction sigact;
+		sigfillset(&sigact.sa_mask);
 
-		sigemptyset(&sigact.sa_mask);
-		sigact.sa_sigaction = trap;
-		sigact.sa_flags = SA_RESTART | SA_SIGINFO;
+		//sigprocmask(SIG_BLOCK, &sigact.sa_mask, NULL);
+		memset(&sigact, 0, sizeof(sigact));
+		sigact.sa_sigaction = debugtrap;
+		sigact.sa_flags = SA_RESTART | SA_SIGINFO | SA_NODEFER;
 		int rc = sigaction(SIGILL, &sigact, (struct sigaction *)NULL);
-		if(rc == 0){
-			printf("Error : sigaction() SIGILL %s\n", strerror(errno));
+		if(rc < 0){
+			return 1; 
 		}
 		int sc = sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL);
-		if(sc == 0){
-			printf("Error : sigaction() SIGSEGV %s\n", strerror(errno));
+		if(sc < 0){
+			return 1; 
 		}
-
 		char buffer[500];
 		sprintf(buffer, "%p:0x7c00", emu->memory); //sory %hhn , I Know Security risc
 		printf("emu->memory : %s \n", buffer);
 		printf("emu->memory : %x \n", (emu->memory + 0x7c00)[0]);
-		_pc((uintptr_t)emu->memory + 0x7c00, 0x7c00);
+		uint8_t hoge[1] = {0x06};
+		_pc((uintptr_t)hoge, 0x7c00);
 
 		delete emu;
 		delete pic;
 		delete inter;
-
-        exit(EXIT_SUCCESS);
-    }
-
-
-    // 親の処理
-    wait(&status); // 子プロセス全部終わるまで待つ
-    exit(EXIT_FAILURE);
 }
 if(osType == 0) { //hariboteOS
 	emu = new Emulator();
