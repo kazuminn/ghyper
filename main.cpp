@@ -171,12 +171,12 @@ if(hypervisor) {
 		sprintf(buffer, "%p:0x7c00", emu->memory); //sory %hhn , I Know Security risc
 		printf("emu->memory : %s \n", buffer);
 		printf("emu->memory : %x \n", (emu->memory + 0x7c00)[0]);
-		uint8_t hoge[1] = {0x06};
-		_pc((uintptr_t)hoge, 0x7c00);
+		_pc((uintptr_t)emu->memory + 0x7c00, 0x7c00);
 
 		delete emu;
 		delete pic;
 		delete inter;
+
 }
 if(osType == 0) { //hariboteOS
 	emu = new Emulator();
