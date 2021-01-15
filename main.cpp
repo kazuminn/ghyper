@@ -58,7 +58,6 @@ void debugtrap(int sig_num, siginfo_t * info, void * ucontext){
 }
 
 void trap(int sig_num, siginfo_t * info, void * ucontext){
-		printf("hhhhhh\n");
         emu->AX = emu->EAX;
 	    emu->AL = emu->EAX;
         emu->AH = emu->EAX;
@@ -84,7 +83,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 		printf("hhhhhh%p\n", (void *)uc->uc_mcontext.rip);
 		printf("opecode : %lx\n", __builtin_bswap64(*pc));
 		
-		func = instructions16[*pc];
+		func = hinstructions16[*pc];
 
 
 #ifndef QUIET
@@ -94,6 +93,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 #endif
 		if(func == NULL){
 			cout<<"命令("<<showbase<<(int)emu->instr.opcode<<")は実装されていません。"<<endl;
+			exit(1);
 		}else{
 		//execute
 		func(emu);
@@ -157,7 +157,7 @@ if(hypervisor) {
 
 		//sigprocmask(SIG_BLOCK, &sigact.sa_mask, NULL);
 		memset(&sigact, 0, sizeof(sigact));
-		sigact.sa_sigaction = debugtrap;
+		sigact.sa_sigaction = trap;
 		sigact.sa_flags = SA_RESTART | SA_SIGINFO | SA_NODEFER;
 		int rc = sigaction(SIGILL, &sigact, (struct sigaction *)NULL);
 		if(rc < 0){

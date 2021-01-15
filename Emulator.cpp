@@ -26,6 +26,8 @@ Emulator::Emulator(){
 	if(memory == NULL){
 		cout<<"error new."<<endl;
 	}
+
+	uint32_t * stack = new (nothrow) uint32_t[1000];
 	
 	InitRegisters();
 
@@ -37,6 +39,7 @@ Emulator::Emulator(){
 	sgregs[2].base = 0x000000; //2 == Ss
 
 	InitInstructions16();
+	InitHInstructions16();
 
 	InitInstructions32();
 	

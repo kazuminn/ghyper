@@ -399,9 +399,11 @@ private:
 typedef void instruction_func_t(Emulator*);	//各命令に対応した関数の型
 
 void InitInstructions16(void);			//16bit命令の初期化
+void InitHInstructions16(void);			//hypervisor16bit命令の初期化
 void InitInstructions32(void);			//32bit
 
 extern instruction_func_t* instructions16[0xffff];	//16bit命令の関数の配列
+extern instruction_func_t* hinstructions16[0xffff];	//hypervisor16bit命令の関数の配列
 extern instruction_func_t* instructions32[0xffff];	//32bit
 
 //eflgas
