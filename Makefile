@@ -18,7 +18,7 @@ CC	= gcc
 CXX	= g++
 
 %.o:%.cpp
-	$(CXX) -o $@ -c $< $(CFLAGS)
+	$(CXX)  -o $@ -c $< $(CFLAGS)
 
 %.bin:%.nask
 	$(NASK) $< $@ $*.lst
