@@ -27,7 +27,7 @@ Emulator::Emulator(){
 		cout<<"error new."<<endl;
 	}
 
-	uint32_t * stack = new (nothrow) uint32_t[1000];
+	stack = new (nothrow) uint32_t[1000];
 	
 	InitRegisters();
 

@@ -266,6 +266,7 @@ public:
 	SGRegister sgregs[6];
 
 	uint8_t *memory;
+	uint32_t *stack;
 	InstrData instr;
 	bool is_16mode;   //true is 16mode, false is 32mode
 public:				// member funcs

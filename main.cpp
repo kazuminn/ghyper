@@ -71,7 +71,6 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 		hinstruction_func_t* func;
 		sig_ucontext_t* uc = (sig_ucontext_t *) ucontext;
 		uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
-		uc->uc_mcontext.rip++;
 		printf("hhhhhh%x\n", *pc);
 		printf("hhhhhh%p\n", (void *)uc->uc_mcontext.rip);
 		printf("opecode : %lx\n", __builtin_bswap64(*pc));
@@ -85,7 +84,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 		cout<<"Code = "<<(uint32_t)emu->instr.opcode<<endl;
 #endif
 		if(func == NULL){
-			cout<<"命令("<<showbase<<(int)emu->instr.opcode<<")は実装されていません。"<<endl;
+			cout<<"命令("<<showbase<<__builtin_bswap64(*pc)<<")は実装されていません。"<<endl;
 			exit(1);
 		}else{
 		//execute
@@ -147,11 +146,18 @@ if(hypervisor) {
 
 		struct sigaction sigact;
 		sigfillset(&sigact.sa_mask);
+		 
+		static char stack[1000];
+        stack_t ss ; 
+        ss.ss_flags = 0;
+        ss.ss_size = 1000;
+        ss.ss_sp = stack;
+        sigaltstack(&ss, 0);
 
 		//sigprocmask(SIG_BLOCK, &sigact.sa_mask, NULL);
 		memset(&sigact, 0, sizeof(sigact));
 		sigact.sa_sigaction = trap;
-		sigact.sa_flags = SA_RESTART | SA_SIGINFO | SA_NODEFER;
+		sigact.sa_flags = SA_RESTART | SA_SIGINFO | SA_NODEFER | SA_ONSTACK;
 		int rc = sigaction(SIGILL, &sigact, (struct sigaction *)NULL);
 		if(rc < 0){
 			return 1; 
@@ -160,10 +166,6 @@ if(hypervisor) {
 		if(sc < 0){
 			return 1; 
 		}
-		char buffer[500];
-		sprintf(buffer, "%p:0x7c00", emu->memory); //sory %hhn , I Know Security risc
-		printf("emu->memory : %s \n", buffer);
-		printf("emu->memory : %x \n", (emu->memory + 0x7c00)[0]);
 		_pc((uintptr_t)emu->memory + 0x7c00, 0x7c00);
 
 		delete emu;

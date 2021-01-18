@@ -6,6 +6,10 @@ hinstruction_func_t* hinstructions16[0xffff];
 namespace hinstruction16{
 
 void push_es(Emulator *emu, sig_ucontext_t* uc){
+	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
+	emu->stack[0] = __builtin_bswap64(*(pc+ 1)); 
+	emu->ESP++;
+	printf("%x\n", (uint8_t *)uc->uc_mcontext.rsp);
 	uc->uc_mcontext.rip++;
 }
 
