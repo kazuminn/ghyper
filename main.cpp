@@ -71,6 +71,8 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 		hinstruction_func_t* func;
 		sig_ucontext_t* uc = (sig_ucontext_t *) ucontext;
 		uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
+		uint32_t * rsp = (uint32_t *)uc->uc_mcontext.rsp;
+		////////////////printf("rsp: %lx\n", *rsp);
 		printf("hhhhhh%x\n", *pc);
 		printf("hhhhhh%p\n", (void *)uc->uc_mcontext.rip);
 		printf("opecode : %lx\n", __builtin_bswap64(*pc));
@@ -137,21 +139,27 @@ if(hypervisor) {
     	pic = new PIC();
     	//kb = new keyboard();
 
+		//init ES
+		emu->sgregs[0].base = 0x820; //0 == Es
+
     	inter = new Interrupt();
 		cout<<"emulator created."<<endl;
 //home/a/haribote/30_day/haribote7f/haribote/haribote.img
 //../xv6-public/xv6.img
-    	emu->LoadBinary("../haribote/30_day/harib27f/haribote/haribote.img", 0x7c00, 1024 * 1024 * 1024);
+    	emu->LoadBinary("/home/a/haribote/z_tools/qemu/haribote.img", 0x7c00, 1024 * 1024 * 1024);
 		printf("emu->memory : %p \n", emu->memory);
 
 		struct sigaction sigact;
-		sigfillset(&sigact.sa_mask);
+		int fill = sigfillset(&sigact.sa_mask);
+		if(fill < 0){
+			return 1; 
+		}
 		 
-		static char stack[1000];
+		static char handler_stack[0xffff];
         stack_t ss ; 
         ss.ss_flags = 0;
-        ss.ss_size = 1000;
-        ss.ss_sp = stack;
+        ss.ss_size = 0xffff;
+        ss.ss_sp = handler_stack;
         sigaltstack(&ss, 0);
 
 		//sigprocmask(SIG_BLOCK, &sigact.sa_mask, NULL);

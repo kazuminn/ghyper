@@ -27,7 +27,7 @@ Emulator::Emulator(){
 		cout<<"error new."<<endl;
 	}
 
-	stack = new (nothrow) uint32_t[1000];
+	stack = new (nothrow) uint32_t[0xffffffff];
 	
 	InitRegisters();
 
@@ -294,6 +294,23 @@ void Emulator::SetMemory32(uint32_t addr, uint32_t val){
 	return;
 }
 
+void Emulator::SetStack32(uint32_t val){
+	for(int i=0; i<4; i++){
+		SetStack8(i, val >> (i*8));
+	}
+
+	return;
+}
+
+void Emulator::SetStack8(int i, uint32_t val){
+	printf("%x への書き込み: %x\n", ESP + i, val & 0xFF);
+	stack[ESP + i] = val & 0xFF;
+}
+
+void Emulator::Push16(uint16_t val){
+	SetStack32(val); 
+    ESP = ESP - 2;
+}
 void Emulator::Push32(uint32_t val){
 //	uint32_t addr = /*GetRegister32(ESP)*/ ESP  - 4;
 //	SetRegister32(ESP, addr);

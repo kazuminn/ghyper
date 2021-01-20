@@ -6,16 +6,16 @@ hinstruction_func_t* hinstructions16[0xffff];
 namespace hinstruction16{
 
 void push_es(Emulator *emu, sig_ucontext_t* uc){
-	int _esp ;
-	__asm(
-		"mov %%esp,%%eax"
-		: "=g"(_esp)
-	);
-	printf("%x\n", _esp);
-	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
-	emu->stack[0] = __builtin_bswap64(*(pc+ 1)); 
-	emu->ESP++;
-	printf("%x\n", (uint8_t *)uc->uc_mcontext.rsp);
+	//uint32_t *rsp = (uint32_t *)uc->uc_mcontext.rsp;
+		//printf("rsp: %lx\n", *rsp);
+	if (emu->ESP_top != (uint32_t )uc->uc_mcontext.rsp){
+		emu->ESP_top = (uint32_t )uc->uc_mcontext.rsp;
+		emu->ESP = (uint32_t )uc->uc_mcontext.rsp;
+	}
+	uint32_t * pc = (uint32_t *)uc->uc_mcontext.rip;
+	printf("cs : %x\n", (uint32_t )uc->uc_mcontext.cs);
+	emu->Push16(emu->sgregs[0].base); 
+    emu->ESP = emu->ESP - 2;
 	uc->uc_mcontext.rip++;
 }
 
