@@ -267,7 +267,7 @@ public:
 
 	uint8_t *memory;
     uint32_t ESP_top;
-	uint32_t *stack;
+	uint8_t *stack;
 	InstrData instr;
 	bool is_16mode;   //true is 16mode, false is 32mode
 public:				// member funcs
@@ -316,6 +316,7 @@ public:				// member funcs
 	void SetMemory16(uint32_t addr, uint32_t val);
 	void SetMemory32(uint32_t addr, uint32_t val);
 	void SetStack32(uint32_t);
+	void SetStack16(uint16_t);
 	void SetStack8(int, uint32_t);
 
 	void Push16(uint16_t val);

@@ -27,7 +27,10 @@ Emulator::Emulator(){
 		cout<<"error new."<<endl;
 	}
 
-	stack = new (nothrow) uint32_t[0xffffffff];
+	stack = new (nothrow) uint8_t[0xffffffff];
+	if(stack == NULL){
+		cout<<"error new stack."<<endl;
+	}
 	
 	InitRegisters();
 
@@ -302,13 +305,21 @@ void Emulator::SetStack32(uint32_t val){
 	return;
 }
 
+void Emulator::SetStack16(uint16_t val){
+	for(int i=0; i<2; i++){
+		SetStack8(i, val >> (i*8));
+	}
+
+	return;
+}
+
 void Emulator::SetStack8(int i, uint32_t val){
 	printf("%x への書き込み: %x\n", ESP + i, val & 0xFF);
 	stack[ESP + i] = val & 0xFF;
 }
 
 void Emulator::Push16(uint16_t val){
-	SetStack32(val); 
+	SetStack16(val); 
     ESP = ESP - 2;
 }
 void Emulator::Push32(uint32_t val){
