@@ -199,7 +199,7 @@ if(hypervisor) {
 		if(sc < 0){
 			return 1; 
 		}
-		_pc((uintptr_t)emu->memory + 0x7c00 + emu->EIP, 0x7c00);
+		_pc((uintptr_t)emu->memory + emu->EIP, 0x7c00);
 
 		delete emu;
 		delete pic;
