@@ -73,9 +73,9 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 		uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
 		uint32_t * rsp = (uint32_t *)uc->uc_mcontext.rsp;
 		////////////////printf("rsp: %lx\n", *rsp);
-		printf("hhhhhh%x\n", *pc);
-		printf("hhhhhh%p\n", (void *)uc->uc_mcontext.rip);
-		printf("opecode : %lx\n", __builtin_bswap64(*pc));
+		printf("opecode : %x\n", *pc);
+		printf("rip: %p\n", (void *)uc->uc_mcontext.rip);
+		printf("emu->memory   : %p\n", emu->memory);
 		
 		func = hinstructions16[*pc];
 
@@ -146,7 +146,32 @@ if(hypervisor) {
 		cout<<"emulator created."<<endl;
 //home/a/haribote/30_day/haribote7f/haribote/haribote.img
 //../xv6-public/xv6.img
-    	emu->LoadBinary("/home/a/haribote/z_tools/qemu/haribote.img", 0x7c00, 1024 * 1024 * 1024);
+    	emu->LoadBinary("/home/a/haribote/harib27f/haribote.img", 0x7c00, 1024 * 1024 * 1024);
+
+        // 16bit ------------------------------------------------------------
+		std::memcpy(&emu->memory[0x280000], &emu->memory[0x4390 + 0x7c00], 512 * 1024);
+
+		uint32_t source;
+		uint32_t dest;
+		uint32_t interval;
+		std::memcpy(&source, &emu->memory[0x280014], 4);
+		std::memcpy(&dest, &emu->memory[0x28000c], 4 ); source += 0x280000;
+		std::memcpy(&interval, &emu->memory[0x280010], 4);
+
+		std::memcpy(&emu->memory[dest], &emu->memory[source], interval);
+
+		emu->EIP = 0x28001b;
+		printf("dest : %x\n", dest);
+		emu->ESP = dest;
+
+
+		emu->memory[0xff2] = 8;
+		emu->SetMemory16(0xff4, 320);
+    	emu->SetMemory16(0xff6, 200);
+		emu->SetMemory32(0xff8, 0xa0000);
+        // end 16bit -------------------------------------------------------------
+
+
 		printf("emu->memory : %p \n", emu->memory);
 
 		struct sigaction sigact;
@@ -174,7 +199,7 @@ if(hypervisor) {
 		if(sc < 0){
 			return 1; 
 		}
-		_pc((uintptr_t)emu->memory + 0x7c00, 0x7c00);
+		_pc((uintptr_t)emu->memory + 0x7c00 + emu->EIP, 0x7c00);
 
 		delete emu;
 		delete pic;

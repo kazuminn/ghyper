@@ -19,6 +19,14 @@ void push_es(Emulator *emu, sig_ucontext_t* uc){
 	uc->uc_mcontext.rip++;
 }
 
+void lock(Emulator *emu, sig_ucontext_t* uc){
+	uc->uc_mcontext.rip++;
+}
+
+void wbinvd(Emulator *emu, sig_ucontext_t* uc){
+	uc->uc_mcontext.rip = uc->uc_mcontext.rip + 2;
+}
+
 }
 
 using namespace hinstruction16;
@@ -27,5 +35,7 @@ void InitHInstructions16(){
 	hinstruction_func_t** func = hinstructions16;
 
     func[0x06] = push_es;
+    func[0xF0] = lock;
+    func[0x0F] = wbinvd;
 }
 

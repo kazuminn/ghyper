@@ -1,0 +1,142 @@
+
+../haribote/30_day/harib27f/haribote/ipl09.bin:     ファイル形式 binary
+
+
+セクション .data の逆アセンブル:
+
+00000000 <.data>:
+   0:	eb 4e                	jmp    0x50
+   2:	90                   	nop
+   3:	48                   	dec    %eax
+   4:	41                   	inc    %ecx
+   5:	52                   	push   %edx
+   6:	49                   	dec    %ecx
+   7:	42                   	inc    %edx
+   8:	4f                   	dec    %edi
+   9:	54                   	push   %esp
+   a:	45                   	inc    %ebp
+   b:	00 02                	add    %al,(%edx)
+   d:	01 01                	add    %eax,(%ecx)
+   f:	00 02                	add    %al,(%edx)
+  11:	e0 00                	loopne 0x13
+  13:	40                   	inc    %eax
+  14:	0b f0                	or     %eax,%esi
+  16:	09 00                	or     %eax,(%eax)
+  18:	12 00                	adc    (%eax),%al
+  1a:	02 00                	add    (%eax),%al
+  1c:	00 00                	add    %al,(%eax)
+  1e:	00 00                	add    %al,(%eax)
+  20:	40                   	inc    %eax
+  21:	0b 00                	or     (%eax),%eax
+  23:	00 00                	add    %al,(%eax)
+  25:	00 29                	add    %ch,(%ecx)
+  27:	ff                   	(bad)  
+  28:	ff                   	(bad)  
+  29:	ff                   	(bad)  
+  2a:	ff 48 41             	decl   0x41(%eax)
+  2d:	52                   	push   %edx
+  2e:	49                   	dec    %ecx
+  2f:	42                   	inc    %edx
+  30:	4f                   	dec    %edi
+  31:	54                   	push   %esp
+  32:	45                   	inc    %ebp
+  33:	4f                   	dec    %edi
+  34:	53                   	push   %ebx
+  35:	20 46 41             	and    %al,0x41(%esi)
+  38:	54                   	push   %esp
+  39:	31 32                	xor    %esi,(%edx)
+  3b:	20 20                	and    %ah,(%eax)
+  3d:	20 00                	and    %al,(%eax)
+	...
+  4f:	00 b8 00 00 8e d0    	add    %bh,-0x2f720000(%eax)
+  55:	bc 00 7c 8e d8       	mov    $0xd88e7c00,%esp
+  5a:	b8 20 08 8e c0       	mov    $0xc08e0820,%eax
+:q
+
+:x:x:q  5f:	b5 00                	mov    $0x0,%ch
+  61:XXXAAQQ+	b6 00                	mov    $0x0,%dh
+  63:	b1 02                	mov    $0x2,%cl
+  65:	bb 43 01 e8 33       	mov    $0x33e80143,%ebx
+  6a:	00 c6                	add    %al,%dh
+  6c:	06                   	push   %es
+  6d:	f0 0f 09             	lock wbinvd 
+  70:	e9 8d 45 b8 00       	jmp    0xb84602
+  75:	00 8e c0 be 90 7c    	add    %cl,0x7c90bec0(%esi)
+  7b:	8a 04 83             	mov    (%ebx,%eax,4),%al
+  7e:	c6 01 3c             	movb   $0x3c,(%ecx)
+  81:	00 74 09 b4          	add    %dh,-0x4c(%ecx,%ecx,1)
+  85:	0e                   	push   %cs
+  86:	bb 0f 00 cd 10       	mov    $0x10cd000f,%ebx
+  8b:	eb ee                	jmp    0x7b
+  8d:	f4                   	hlt    
+  8e:	eb fd                	jmp    0x8d
+  90:	0a 0a                	or     (%edx),%cl
+  92:	6c                   	insb   (%dx),%es:(%edi)
+  93:	6f                   	outsl  %ds:(%esi),(%dx)
+  94:	61                   	popa   
+  95:	64 20 65 72          	and    %ah,%fs:0x72(%ebp)
+  99:	72 6f                	jb     0x10a
+  9b:	72 0a                	jb     0xa7
+  9d:	00 8c c0 c1 e0 03 80 	add    %cl,-0x7ffc1f3f(%eax,%eax,8)
+  a4:	e4 7f                	in     $0x7f,%al
+  a6:	b0 80                	mov    $0x80,%al
+  a8:	28 e0                	sub    %ah,%al
+  aa:	88 dc                	mov    %bl,%ah
+  ac:	80 ff 00             	cmp    $0x0,%bh
+  af:	74 02                	je     0xb3
+  b1:	b4 12                	mov    $0x12,%ah
+  b3:	38 e0                	cmp    %ah,%al
+  b5:	76 02                	jbe    0xb9
+  b7:	88 e0                	mov    %ah,%al
+  b9:	b4 13                	mov    $0x13,%ah
+  bb:	28 cc                	sub    %cl,%ah
+  bd:	38 e0                	cmp    %ah,%al
+  bf:	76 02                	jbe    0xc3
+  c1:	88 e0                	mov    %ah,%al
+  c3:	53                   	push   %ebx
+  c4:	be 00 00 b4 02       	mov    $0x2b40000,%esi
+  c9:	bb 00 00 b2 00       	mov    $0xb20000,%ebx
+  ce:	06                   	push   %es
+  cf:	52                   	push   %edx
+  d0:	51                   	push   %ecx
+  d1:	50                   	push   %eax
+  d2:	cd 13                	int    $0x13
+  d4:	73 14                	jae    0xea
+  d6:	83 c6 01             	add    $0x1,%esi
+  d9:	83 fe 05             	cmp    $0x5,%esi
+  dc:	73 95                	jae    0x73
+  de:	b4 00                	mov    $0x0,%ah
+  e0:	b2 00                	mov    $0x0,%dl
+  e2:	cd 13                	int    $0x13
+  e4:	58                   	pop    %eax
+  e5:	59                   	pop    %ecx
+  e6:	5a                   	pop    %edx
+  e7:	07                   	pop    %es
+  e8:	eb dd                	jmp    0xc7
+  ea:	58                   	pop    %eax
+  eb:	59                   	pop    %ecx
+  ec:	5a                   	pop    %edx
+  ed:	5b                   	pop    %ebx
+  ee:	c1 eb 05             	shr    $0x5,%ebx
+  f1:	b4 00                	mov    $0x0,%ah
+  f3:	01 c3                	add    %eax,%ebx
+  f5:	c1 e3 05             	shl    $0x5,%ebx
+  f8:	8e c3                	mov    %ebx,%es
+  fa:	5b                   	pop    %ebx
+  fb:	29 c3                	sub    %eax,%ebx
+  fd:	74 18                	je     0x117
+  ff:	00 c1                	add    %al,%cl
+ 101:	80 f9 12             	cmp    $0x12,%cl
+ 104:	76 98                	jbe    0x9e
+ 106:	b1 01                	mov    $0x1,%cl
+ 108:	80 c6 01             	add    $0x1,%dh
+ 10b:	80 fe 02             	cmp    $0x2,%dh
+ 10e:	72 8e                	jb     0x9e
+ 110:	b6 00                	mov    $0x0,%dh
+ 112:	80 c5 01             	add    $0x1,%ch
+ 115:	eb 87                	jmp    0x9e
+ 117:	c3                   	ret    
+	...
+ 1fc:	00 00                	add    %al,(%eax)
+ 1fe:	55                   	push   %ebp
+ 1ff:	aa                   	stos   %al,%es:(%edi)
