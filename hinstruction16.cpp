@@ -34,8 +34,8 @@ void mov_rm32_imm32(Emulator *emu, sig_ucontext_t* uc){
 
 
 // 圧倒的NOP
-void nop(Emulator *emu){
-	emu->EIP++;
+void nop(Emulator *emu, sig_ucontext_t* uc){
+	uc->uc_mcontext.rip++; 
 }
 
 void ltr_rm16(Emulator *emu, ModRM *modrm){
