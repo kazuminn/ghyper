@@ -1,0 +1,24 @@
+make test03.bin
+make[1]: ディレクトリ '/home/a/ghyper' に入ります
+make[1]: 'test03.bin' は更新済みです.
+make[1]: ディレクトリ '/home/a/ghyper' から出ます
+make -C kazuminlib 
+make[1]: ディレクトリ '/home/a/ghyper/kazuminlib' に入ります
+make kazuminlib.a
+make[2]: ディレクトリ '/home/a/ghyper/kazuminlib' に入ります
+make[2]: 'kazuminlib.a' は更新済みです.
+make[2]: ディレクトリ '/home/a/ghyper/kazuminlib' から出ます
+make[1]: ディレクトリ '/home/a/ghyper/kazuminlib' から出ます
+make -C device
+make[1]: ディレクトリ '/home/a/ghyper/device' に入ります
+make Device.a
+make[2]: ディレクトリ '/home/a/ghyper/device' に入ります
+make[2]: 'Device.a' は更新済みです.
+make[2]: ディレクトリ '/home/a/ghyper/device' から出ます
+make[1]: ディレクトリ '/home/a/ghyper/device' から出ます
+make x86 
+make[1]: ディレクトリ '/home/a/ghyper' に入ります
+g++ -o hinstruction16.o -c hinstruction16.cpp -std=c++11 -g
+Makefile:21: recipe for target 'hinstruction16.o' failed
+make[1]: ディレクトリ '/home/a/ghyper' から出ます
+Makefile:27: recipe for target 'default' failed

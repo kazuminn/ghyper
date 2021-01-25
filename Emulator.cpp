@@ -41,11 +41,8 @@ Emulator::Emulator(){
 	sgregs[0].base = 0x000000; //0 == Es
 	sgregs[2].base = 0x000000; //2 == Ss
 
-	InitInstructions16();
 	InitHInstructions16();
 
-	InitInstructions32();
-	
 //	memset(memory, 0x01, memory_size);
 //	test(this);
 }
@@ -71,19 +68,26 @@ Emulator::~Emulator(){
 	delete[] memory;
 }
 
-int Emulator::parse_prefix(Emulator *emu){
-	while(true) {
-		uint8_t code = emu->GetSignCode8(0);
-		switch(code) {
-			case 0x66:
-				emu->EIP++;
-				return 0;
-		}
-
-		break;
+int Emulator::parse_prefix(Emulator *emu,  sig_ucontext_t* uc){
+	uint8_t code = *(uint8_t*)uc->uc_mcontext.rip;
+	switch(code) {
+		case 0x66:
+			uc->uc_mcontext.rip++;
+			return 0;
 	}
 	return -1;
 }
+void Emulator::fetchContext(sig_ucontext_t* uc){
+	ESI = uc->uc_mcontext.rsi & 0xFFFFFFFF;
+	EDI = uc->uc_mcontext.rdi & 0xFFFFFFFF;
+	EBP = uc->uc_mcontext.rbp & 0xFFFFFFFF;
+	EBX = uc->uc_mcontext.rbx & 0xFFFFFFFF;
+	EDX = uc->uc_mcontext.rdx & 0xFFFFFFFF;
+	EAX = uc->uc_mcontext.rax & 0xFFFFFFFF;
+	ECX = uc->uc_mcontext.rcx & 0xFFFFFFFF;
+	ESP = uc->uc_mcontext.rsp & 0xFFFFFFFF;
+}
+
 
 size_t Emulator::read_data(void *dst, uint32_t src_addr, size_t size){
     memcpy(dst, &memory[src_addr], size);

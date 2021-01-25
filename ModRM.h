@@ -7,10 +7,10 @@ class ModRM {
 private:
 	Emulator *emu;
 public:
-	ModRM(Emulator *emu);
+	ModRM(Emulator *emu,  sig_ucontext_t* uc);
 //	~ModRM();
 
-	void Parse(Emulator *emu);
+	void Parse(Emulator *emu,  sig_ucontext_t* uc);
 	void Parse();
 
 	uint8_t GetRM8(Emulator *emu);

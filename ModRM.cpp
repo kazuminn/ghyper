@@ -6,44 +6,48 @@
 using namespace std;
 
 
-ModRM::ModRM(Emulator *emu){
+ModRM::ModRM(Emulator *emu,  sig_ucontext_t* uc){
 	this->emu = emu;
-	Parse(emu);
+	Parse(emu, uc);
 }
 
 
-void ModRM::Parse(Emulator *emu){	//cout<<"parse"<<endl;
-	uint8_t code = emu->GetCode8(0);
+void ModRM::Parse(Emulator *emu,  sig_ucontext_t* uc){	//cout<<"parse"<<endl;
+	uint8_t code = *(uint8_t *)uc->uc_mcontext.rip;
 	cout << "code=" << (uint32_t) code << endl;
 	emu->instr.Mod = ((code & 0xC0) >> 6);
 	emu->instr.opecode = ((code & 0x38) >> 3);
 	emu->instr.RM = code & 0x07;
 
 	cout << "Mod:" << (uint32_t) emu->instr.Mod << " RM:" << (uint32_t) emu->instr.RM << endl;
+	uc->uc_mcontext.rip++;
 
-	emu->EIP++;
 
     if (emu->instr.Mod !=3 && emu->instr.RM == 4){
-        emu->instr._SIB = emu->GetCode8(0);
-        emu->EIP++;
+        emu->instr._SIB = *(uint8_t *)uc->uc_mcontext.rip;
+	    uc->uc_mcontext.rip++;
     }
 
     if(emu->instr.prefix) {
 
 		if ((emu->instr.Mod == 0 && emu->instr.RM == 5) || emu->instr.Mod == 2) {
-			emu->instr.disp32 = emu->GetSignCode32(0);
-			emu->EIP += 4;
+            uint32_t * pc = (uint32_t *)uc->uc_mcontext.rip;
+			emu->instr.disp32 = *pc;
+	        uc->uc_mcontext.rip = uc->uc_mcontext.rip + 4;
 		} else if (emu->instr.Mod == 1) {
-			emu->instr.disp8 = emu->GetSignCode8(0);
-			emu->EIP++;
+            uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
+			emu->instr.disp8 = *pc;
+	        uc->uc_mcontext.rip++;
 		}
 	}else {
     	if((emu->instr.Mod == 0 && emu->instr.RM == 6) || emu->instr.Mod == 2){
-			emu->instr.disp16 = emu->GetSignCode32(0);
-			emu->EIP += 2;
+            uint16_t * pc = (uint16_t *)uc->uc_mcontext.rip;
+			emu->instr.disp16 = *pc;
+	        uc->uc_mcontext.rip = uc->uc_mcontext.rip + 2;
     	}else if (emu->instr.Mod == 1){
-			emu->instr.disp8 = emu->GetSignCode8(0);
-			emu->EIP++;
+            uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
+			emu->instr.disp8 = *pc;
+	        uc->uc_mcontext.rip++;
     	}
     }
 

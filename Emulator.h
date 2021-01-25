@@ -15,6 +15,15 @@
 #define LOW			0
 #define HIGH			1
 
+//instructions
+typedef struct _sig_ucontext {
+ 	unsigned long     uc_flags;
+ 	struct ucontext   *uc_link;
+ 	stack_t           uc_stack;
+ 	struct sigcontext uc_mcontext;
+ 	sigset_t          uc_sigmask;
+} sig_ucontext_t;
+
 extern const char* registers_name16[];		//16bitレジスタの名前
 extern const char* registers_name32[];		//32bitレジスタの名前
 
@@ -297,7 +306,9 @@ public:				// member funcs
 	uint32_t GetCode32(int index);
 	int32_t GetSignCode32(int index);
 
-	int parse_prefix(Emulator *emu);
+	int parse_prefix(Emulator *emu,  sig_ucontext_t* uc);
+
+	void fetchContext(sig_ucontext_t* uc);
 
 	uint8_t GetRegister8(int index);
     uint16_t GetRegister16(int index);
@@ -402,14 +413,6 @@ private:
 	bool chk_parity(uint8_t v);
 };
 
-//instructions
-typedef struct _sig_ucontext {
- 	unsigned long     uc_flags;
- 	struct ucontext   *uc_link;
- 	stack_t           uc_stack;
- 	struct sigcontext uc_mcontext;
- 	sigset_t          uc_sigmask;
-} sig_ucontext_t;
 
 typedef void instruction_func_t(Emulator*);	//各命令に対応した関数の型
 typedef void hinstruction_func_t(Emulator*, sig_ucontext_t*);	//各命令に対応した関数の型
