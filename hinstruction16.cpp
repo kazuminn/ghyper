@@ -32,11 +32,18 @@ void mov_rm32_imm32(Emulator *emu, sig_ucontext_t* uc){
 	uc->uc_mcontext.rip = uc->uc_mcontext.rip + 4;
 }
 
-
-// 圧倒的NOP
 void nop(Emulator *emu, sig_ucontext_t* uc){
 	uc->uc_mcontext.rip++; 
 }
+
+void mov_al_moffs8(Emulator *emu, sig_ucontext_t* uc){
+	uc->uc_mcontext.rip++; 
+	uc->uc_mcontext.rip++; 
+	uc->uc_mcontext.rip++; 
+	uc->uc_mcontext.rip++; 
+	uc->uc_mcontext.rip++; 
+}
+/*
 
 void ltr_rm16(Emulator *emu, ModRM *modrm){
 	uint16_t rm16 = modrm->GetRM16();
@@ -1162,6 +1169,7 @@ void movzs_r32_rm16(Emulator *emu){
     uint16_t rm16 = modrm.GetRM16();
     modrm.SetR32(rm16);
 }
+*/
 
 }
 
@@ -1170,166 +1178,7 @@ using namespace hinstruction16;
 void InitHInstructions16(){
 	hinstruction_func_t** func = hinstructions16;
 
-	int i;
-	instruction_func_t** func = instructions32;
-	func[0x01]	= add_rm32_r32;
-	func[0x03]	= add_r32_rm32;
-//	func[0x04]	= add_al_imm8;
-	func[0x05]	= add_eax_imm32;
-
-	func[0x06]	= push_es;
-	func[0x07]	= pop_es;
-
-	func[0x09]  = or_rm32_r32;
-	func[0x0b]  = or_rm32_r32;
-	func[0x0d]  = or_eax_imm32;
-
-	func[0x16]  = push_ss;
-	func[0x17]  = pop_ss;
-	func[0x1e]  = push_ds;
-	func[0x1f]  = pop_ds;
-
-	func[0x25]  = and_eax_imm32;
-
-	func[0x28]  = sub_rm8_r8;
-	func[0x29]  = sub_rm32_r32;
-	func[0x2b]  = sub_r32_rm32;
-	func[0x2d]  = sub_eax_imm32;
-
-	//func[0x3C]	= cmp_al_imm8;
-	//func[0x3D]	= cmp_eax_imm32;
-	func[0x31]	= xor_rm32_r32;
-	func[0x33]	= xor_r32_rm32;
-	func[0x35]	= xor_eax_imm32;
-
-	func[0x38]	= cmp_rm8_r8;
-	func[0x39]  = cmp_rm32_r32;
-	func[0x3a]  = cmp_r8_rm8;
-	func[0x3b]  = cmp_r32_rm32;
-	func[0x3c]  = cmp_al_imm8;
-	func[0x3d]  = cmp_eax_imm32;
-
-	for(i=0;i<8;i++){
-		func[0x40 + i]	= inc_r32;
-	}
-	for(i=0;i<8;i++){
-		func[0x48 + i]	= dec_r32;
-	}
-
-
-
-	for(i=0;i<8;i++){
-		func[0x50 + i]	= push_r32;
-	}
-
-
-
-	for(i=0;i<8;i++){
-		func[0x58 + i]	= pop_r32;
-	}
-
-
-	func[0x60]	= pushad;
-	func[0x61]	= popad;
-
-	func[0x69]	= imul_r32_rm32_imm32;
-
-	func[0x68]	= push_imm32;
-	func[0x6A]	= push_imm8;
-
-	func[0x6B]	= imul_r32_rm32_imm8;
-
-	func[0x70]	= jo;
-	func[0x71]	= jno;
-	func[0x72]	= jc;
-	func[0x73]	= jnc;
-	func[0x74]	= jz_rel8;
-	func[0x75]	= jnz;
-	func[0x76]	= jbe;
-	func[0x77]	= ja;
-	func[0x78]	= js;
-	func[0x79]	= jns;
-	func[0x7C]	= jl;
-	func[0x7D]	= jnl;
-	func[0x7E]	= jle;
-	func[0x7F]	= jnle;
-
-	func[0x80]	= code_80;
-    func[0x81]	= code_81;
-	func[0x83]	= code_83;
-
-	func[0x84]	= test_rm8_r8;
-	func[0x85]	= test_rm32_r32;
-
-	func[0x88]	= mov_rm8_r8;
-	func[0x89]	= mov_rm32_r32;
-	func[0x8A]	= mov_r8_rm8;
-	func[0x8B]	= mov_r32_rm32;
-
-	func[0x8D]	= lea_r32_m32;
-    func[0x8E]	= mov_sreg_rm16;
-
-	func[0x90]	= nop;
-	func[0x99]	= cdq;
-	func[0x9C]	= pushfd;
-	func[0x9D]	= popfd;
-
-	func[0xA0]	= mov_al_moffs8;
-	func[0xA1]	= mov_eax_moffs32;
-	func[0xA3]	= mov_moffs32_eax;
-
-	func[0xA9]	= test_eax_imm32;
-
-	for(i=0;i<8;i++){
-		func[0xB0 + i]	= mov_r8_imm8;
-	}
-
-	for(i=0;i<8;i++){
-		func[0xB8 + i]	= mov_r32_imm32;
-	}
-	func[0xC0]	= code_c0;
-	func[0xC1]	= code_c1;
-
-	func[0xC3]	= ret;
-	func[0xC6]	= mov_rm8_imm8;
-	func[0xC7]	= mov_rm32_imm32;
-	func[0xC9]	= leave;
-
-    func[0xCF]	= iret;
-	func[0xd3]	= code_d3;
-	//func[0xCD]	= swi;
-
-	func[0xE8]	= call_rel32;
-	func[0xE9]	= near_jump;
-	func[0xEB]	= short_jump;
-
-	func[0xEC]	= in_al_dx;
-	func[0xEE]	= out_dx_al;
-
-
-	func[0xF6]	= code_f6;
-	func[0xF7]	= code_f7;
-	func[0xFA]	= cli;
-	func[0xFB]	= sti;
-	func[0xFF]	= code_ff;
-
-	func[0x0f00]	= code_0f00;
-	func[0x0f01]	= code_0f01;
-	func[0x0f84]	= jz_rel32;
-	func[0x0f85]	= jnz_rel32;
-    func[0x0f86]	= jbe_rel32;
-	func[0x0f88]	= js_rel32;
-	func[0x0f8d]	= jnl_rel32;
-	func[0x0f8e]	= jle_rel32;
-	func[0x0f8f]	= jnle_rel32;
-	func[0x0f8c]	= jl_rel32;
-	func[0x0f95]	= setnz_rm8;
-	func[0x0fb6]	= movzs_r32_rm8;
-    func[0x0fb7]	= movzs_r32_rm16;
-	func[0x0fbf]	= movsx_r32_rm16;
-
-	func[0x0fAF]	= imul_r32_rm32;
-	func[0x0fBE]	= movsx_r32_rm8;
-
+	func[0xc7] = mov_rm32_imm32;
+	func[0xA0] = mov_al_moffs8;
 }
 
