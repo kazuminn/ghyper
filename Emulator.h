@@ -38,7 +38,6 @@ struct SIB {
 
 
 struct InstrData {
-    uint16_t opcode;
 	int prefix;
 	uint8_t Mod;
 	union {
@@ -273,7 +272,7 @@ public:
 
 	Register reg[REGISTERS_COUNT];
 	SGRegister sgregs[6];
-
+ 
 	uint8_t *memory;
     uint32_t ESP_top;
 	uint8_t *stack;

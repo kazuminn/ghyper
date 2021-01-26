@@ -22,15 +22,12 @@ const char* registers_name32[] = {"EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI
 Emulator::Emulator(){
 	BitMode = DEFAULT_BIT_MODE;
 	memory_size = 0xffffffff;
-	memory = new (nothrow) uint8_t[memory_size];
+	uint8_t tmp_memory[memory_size];
+	memory = tmp_memory;
 	if(memory == NULL){
 		cout<<"error new."<<endl;
 	}
 
-	stack = new (nothrow) uint8_t[0xffffffff];
-	if(stack == NULL){
-		cout<<"error new stack."<<endl;
-	}
 	
 	InitRegisters();
 

@@ -75,6 +75,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 		uint32_t * rsp = (uint32_t *)uc->uc_mcontext.rsp;
 		////////////////printf("rsp: %lx\n", *rsp);
 		printf("opecode : %x\n", *pc);
+		printf("opecode : %x\n", *(pc + 1));
 		printf("rip: %p\n", (void *)uc->uc_mcontext.rip);
 		printf("emu->memory   : %p\n", emu->memory);
 
