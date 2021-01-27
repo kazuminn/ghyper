@@ -18,16 +18,18 @@ const char* registers_name32[] = {"EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI
 //void test(Emulator *emu){
 //	cout<<"test("<<emu<<")"<<endl;
 //}
+	#pragma address tmp_memory=0x000
+	uint8_t tmp_memory[0xffffffff];
 
 Emulator::Emulator(){
 	BitMode = DEFAULT_BIT_MODE;
 	memory_size = 0xffffffff;
-	uint8_t tmp_memory[memory_size];
+	memset(tmp_memory, 0, sizeof(tmp_memory));
 	memory = tmp_memory;
 	if(memory == NULL){
 		cout<<"error new."<<endl;
 	}
-
+	//printf("tmp: %x\n", tmp_memory);
 	
 	InitRegisters();
 
