@@ -114,33 +114,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 
 int main(int argc, char **argv){
 
-	 
-	int opt;
 
-	opterr = 1;
-
-	bool hypervisor = false;
-	while ((opt = getopt(argc, argv, "ho:")) != -1){
-		switch (opt) {
-			case 'o':
-				if(*optarg == 'x'){
-					osType = 1;
-				} else if(*optarg == 'h'){
-					osType = 0;
-				}
-				break;
-			case 'h':
-				hypervisor = true;
-				break;
-			default:
-				printf("Usage: ./x86 ./path/to/img -o x|h \n");
-				break;
-		}
-	}
-	
-
-
-if(hypervisor) {
         cout << "プロセス生成" << endl;
 
 		emu = new Emulator();
@@ -213,5 +187,4 @@ if(hypervisor) {
 		delete pic;
 		delete inter;
 
-}
 }
