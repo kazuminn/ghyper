@@ -307,7 +307,7 @@ public:				// member funcs
 
 	int parse_prefix(Emulator *emu,  sig_ucontext_t* uc);
 
-	void fetchContext(sig_ucontext_t* uc);
+	void evacuateRegister(sig_ucontext_t* uc);
 
 	uint8_t GetRegister8(int index);
     uint16_t GetRegister16(int index);

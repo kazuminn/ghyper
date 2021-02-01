@@ -22,37 +22,15 @@ void push_es(Emulator *emu, sig_ucontext_t* uc){
 */
 
 void mov_rm32_imm32(Emulator *emu, sig_ucontext_t* uc){
-	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
-	int32_t rm32 = *(pc + 2) + (*(pc + 3) << 8) + (*(pc + 4) << 16) + (*(pc + 5) << 24);
-	int32_t dst = rm32 + (intptr_t)emu->memory;
-	printf("memory : %lx\n", (intptr_t)emu->memory);
-	printf("rm32 : %x\n", rm32);
-	printf("dst : %x\n", dst);
-	//uint32_t imm32 = *(pc + 6)+ (*(pc + 8) << 8) + (*(pc + 10) << 16) + (*(pc + 11) << 24);
-	uint8_t asmb[10] = {*pc, *(pc + 1), (dst >> 24) & 0xFF,(dst >> 16) & 0xFF,(dst >> 8) & 0xFF,dst & 0xFF,*(pc + 7),*(pc + 8),*(pc + 9)};
-	typedef int (*x64_jit_func)(void);
-	x64_jit_func func = (x64_jit_func)asmb;
-	func();
-	exit(1);
-	//printf("dst : %x\n", dst);
-	/*
-	__asm__ __volatile__("MOV	%1,DWORD [%0+EBP+%2]" 
-			:
-			: "a"(rm32), "b"(imm32) , "c"(emu->memory)
-			: "%eax", "%ebx", "%ecx"
-			);
-			*/
-	uc->uc_mcontext.rip = uc->uc_mcontext.rip + 10; 
-	/*
 	uc->uc_mcontext.rip++; 
 
-	emu->fetchContext(uc);
 	ModRM modrm(emu, uc);
 	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
 	uint32_t imm32 = *pc + (*(pc + 1) << 8) + (*(pc + 1) << 16) + (*(pc + 1) << 24);
+	uint8_t  *c = (uint8_t *)uc->uc_mcontext.rax;
+	printf("c : %x\n", pc);
 	modrm.SetRM32(imm32);		
 	uc->uc_mcontext.rip = uc->uc_mcontext.rip + 4;
-	*/
 }
 
 void nop(Emulator *emu, sig_ucontext_t* uc){
@@ -69,7 +47,6 @@ void mov_al_moffs8(Emulator *emu, sig_ucontext_t* uc){
 
 void mov_rm32_r32(Emulator *emu, sig_ucontext_t* uc){	//cout<<"mov2"<<endl;
 	uc->uc_mcontext.rip++; 
-	emu->fetchContext(uc);
 	
 	emu->instr.opecode = *(uint8_t *)uc->uc_mcontext.rip;
 	ModRM modrm(emu, uc);

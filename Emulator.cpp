@@ -18,18 +18,13 @@ const char* registers_name32[] = {"EAX", "ECX", "EDX", "EBX", "ESP", "EBP", "ESI
 //void test(Emulator *emu){
 //	cout<<"test("<<emu<<")"<<endl;
 //}
-	#pragma address tmp_memory=0x000
-	uint8_t tmp_memory[0xffffffff];
-
 Emulator::Emulator(){
 	BitMode = DEFAULT_BIT_MODE;
 	memory_size = 0xffffffff;
-	memset(tmp_memory, 0, sizeof(tmp_memory));
-	memory = tmp_memory;
+	memory = new uint8_t[memory_size];
 	if(memory == NULL){
 		cout<<"error new."<<endl;
 	}
-	//printf("tmp: %x\n", tmp_memory);
 	
 	InitRegisters();
 
@@ -76,7 +71,7 @@ int Emulator::parse_prefix(Emulator *emu,  sig_ucontext_t* uc){
 	}
 	return -1;
 }
-void Emulator::fetchContext(sig_ucontext_t* uc){
+void Emulator::evacuateRegister(sig_ucontext_t* uc){
 	ESI = uc->uc_mcontext.rsi & 0xFFFFFFFF;
 	EDI = uc->uc_mcontext.rdi & 0xFFFFFFFF;
 	EBP = uc->uc_mcontext.rbp & 0xFFFFFFFF;

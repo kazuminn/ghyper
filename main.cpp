@@ -89,6 +89,9 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 		cout<<"EIP = "<<hex<<showbase<<emu->EIP<<", ";
 		cout<<"Code = "<<(uint32_t)emu->instr.opcode<<endl;
 #endif
+
+		emu->evacuateRegister(uc);
+
 		if(func == NULL){
 			cout<<"命令("<<showbase<<__builtin_bswap64(*pc)<<")は実装されていません。"<<endl;
 			exit(1);
