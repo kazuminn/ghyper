@@ -27,8 +27,6 @@ void mov_rm32_imm32(Emulator *emu, sig_ucontext_t* uc){
 	ModRM modrm(emu, uc);
 	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
 	uint32_t imm32 = *pc + (*(pc + 1) << 8) + (*(pc + 1) << 16) + (*(pc + 1) << 24);
-	uint8_t  *c = (uint8_t *)uc->uc_mcontext.rax;
-	printf("c : %x\n", pc);
 	modrm.SetRM32(imm32);		
 	uc->uc_mcontext.rip = uc->uc_mcontext.rip + 4;
 }

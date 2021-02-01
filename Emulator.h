@@ -264,6 +264,7 @@ public:
     std::unordered_map<uint16_t, PortIO*> port_io;
     std::unordered_map<uint16_t, size_t> port_io_map;
     Register eflags;
+    __uint64_t eeflags;
     Register sreg[6];
 	Register CR[5];		// CR0 ~ CR4 制御レジスタ
 
@@ -308,6 +309,7 @@ public:				// member funcs
 	int parse_prefix(Emulator *emu,  sig_ucontext_t* uc);
 
 	void evacuateRegister(sig_ucontext_t* uc);
+	void returnRegister(sig_ucontext_t* uc);
 
 	uint8_t GetRegister8(int index);
     uint16_t GetRegister16(int index);

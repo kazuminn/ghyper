@@ -106,6 +106,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 			cout<<"out of memory."<<endl;
 		}
 
+	emu->returnRegister(uc);
 	//emu->DumpRegisters(32);
 	//emu->DumpMemory("memdump.bin");
 
