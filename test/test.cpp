@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
 
-TEST(MyLibraryTest, Function1Test) {
+TEST(Test, mov_rm32_imm32) {
+    uint8_t asmb[10] = {0xc7, 0x85, 0xff, 0xff, 0xfb, 0xc0, 0xff, 0xff, 0xff, 0xff];
+    hv(asmb);
 }

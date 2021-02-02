@@ -57,5 +57,5 @@ $(BIN):$(BINSRC)
 crt0.o:crt0.asm
 	nasm -f elf crt0.asm
 
-test:test/test.o
+test:$(OBJS)
 	$(CXX)  test/test.o $(OBJS) $(LDFLAGS)  -lgtest -lpthread -o t
