@@ -2,7 +2,7 @@ TAR	= x86
 BIN	= test03.bin
 BINSRC = test03.c
 
-OBJS	= main.o Emulator.o ModRM.o interrupt.o pc.o hinstruction16.o
+OBJS	= main.o Emulator.o ModRM.o interrupt.o pc.o hinstruction16.o 
 OBJS	+= GUI.o eflags.o
 OBJS	+= kazuminlib/kazuminlib.a
 OBJS	+= device/Device.a
@@ -44,7 +44,7 @@ full:
 	make
 
 $(TAR):$(OBJS)
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	$(CXX)  -o $@ $^ $(LDFLAGS) -lgtest
 
 device/Device.a:
 	make -C device
@@ -57,3 +57,5 @@ $(BIN):$(BINSRC)
 crt0.o:crt0.asm
 	nasm -f elf crt0.asm
 
+test:test/test.o
+	$(CXX)  test/test.o $(OBJS) $(LDFLAGS)  -lgtest -lpthread -o t

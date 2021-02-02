@@ -20,6 +20,8 @@
 #include "device/keyboard.h"
 #include "queue"
 
+#include <gtest/gtest.h> 
+ 
 #define DEBUG
 
 #define QUIET
@@ -112,8 +114,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 
 }
 
-int main(int argc, char **argv){
-
+int hv(uint8_t asmb[10]) {
 
         cout << "プロセス生成" << endl;
 
@@ -128,6 +129,11 @@ int main(int argc, char **argv){
 		cout<<"emulator created."<<endl;
 //home/a/haribote/30_day/haribote7f/haribote/haribote.img
 //../xv6-public/xv6.img
+	#ifdef DEBUG
+	    	typedef int (*x64_jit_func)(void);
+	        x64_jit_func func = (x64_jit_func)asmb;
+			func();
+	#else
     	emu->LoadBinary("/home/a/haribote/harib27f/haribote.img", 0x7c00, 1024 * 1024 * 1024);
 
         // 16bit ------------------------------------------------------------
@@ -186,5 +192,16 @@ int main(int argc, char **argv){
 		delete emu;
 		delete pic;
 		delete inter;
+	#endif
+}
+
+int main(int argc, char **argv){
+	#ifdef DEBUG
+	::testing::InitGoogleTest(&argc, argv);
+	RUN_ALL_TESTS();
+	#endif
+
+	uint8_t dummy[10];
+	return hv(dummy);
 
 }
