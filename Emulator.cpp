@@ -81,7 +81,6 @@ void Emulator::evacuateRegister(sig_ucontext_t* uc){
 	ECX = uc->uc_mcontext.rcx & 0xFFFFFFFF;
 	ESP = uc->uc_mcontext.rsp & 0xFFFFFFFF;
 	eeflags = uc->uc_mcontext.eflags;
-	printf("efalgs : %lx\n", uc->uc_mcontext.eflags);
 }
 
 void Emulator::returnRegister(sig_ucontext_t* uc){

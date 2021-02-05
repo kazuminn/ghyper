@@ -2,7 +2,7 @@ TAR	= x86
 BIN	= test03.bin
 BINSRC = test03.c
 
-OBJS	= main.o Emulator.o ModRM.o interrupt.o pc.o hinstruction16.o 
+OBJS	= test/test.o main.o Emulator.o ModRM.o interrupt.o pc.o hinstruction16.o ghyper.o
 OBJS	+= GUI.o eflags.o
 OBJS	+= kazuminlib/kazuminlib.a
 OBJS	+= device/Device.a
@@ -58,4 +58,4 @@ crt0.o:crt0.asm
 	nasm -f elf crt0.asm
 
 test:$(OBJS)
-	$(CXX)  test/test.o $(OBJS) $(LDFLAGS)  -lgtest -lpthread -o t
+	$(CXX)   $(OBJS) $(LDFLAGS)  -lgtest -lpthread -o t
