@@ -124,7 +124,6 @@ void *thread_hv(void *arg){
         ss.ss_sp = handler_stack;
         sigaltstack(&ss, 0);
 
-		//sigprocmask(SIG_BLOCK, &sigact.sa_mask, NULL);
 		memset(&sigact, 0, sizeof(sigact));
 		sigact.sa_sigaction = trap;
 		sigact.sa_flags = SA_RESTART | SA_SIGINFO | SA_NODEFER | SA_ONSTACK;
@@ -132,7 +131,11 @@ void *thread_hv(void *arg){
 		int sc = sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL);
 
 		void *addr = alloca(16384 + 0x4000); 
-		_pc((uintptr_t)emu->memory + emu->EIP, 0x7c00);
+		__asm("jmpq %0"
+			  :
+			  : "r"(emu->memory + emu->EIP)
+			  : 
+			  );
 }
 
 int Ghyper::hv(uint8_t asmb[11]) {
