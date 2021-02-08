@@ -2,8 +2,8 @@ TAR	= x86
 BIN	= test03.bin
 BINSRC = test03.c
 
-OBJS	= test/test.o main.o Emulator.o ModRM.o interrupt.o pc.o hinstruction16.o ghyper.o
-OBJS	+= GUI.o eflags.o
+OBJS	= test/test.cpp main.cpp Emulator.cpp ModRM.o interrupt.cpp pc.o hinstruction16.cpp ghyper.cpp
+OBJS	+= GUI.cpp eflags.cpp
 OBJS	+= kazuminlib/kazuminlib.a
 OBJS	+= device/Device.a
 #OBJS	+= GL/lib/libglut.a
@@ -18,7 +18,7 @@ CC	= gcc
 CXX	= g++
 
 %.o:%.cpp
-	$(CXX)  -o $@ -c $< $(CFLAGS)
+	$(CXX) -DDEBUG -o $@ -c $< $(CFLAGS)
 
 %.bin:%.nask
 	$(NASK) $< $@ $*.lst
@@ -58,4 +58,4 @@ crt0.o:crt0.asm
 	nasm -f elf crt0.asm
 
 test:$(OBJS)
-	$(CXX)  -DDEBUG[=def] $(OBJS) $(LDFLAGS)   -lgtest -lpthread -o t 
+	$(CXX)   -DDEBUG $(OBJS) $(LDFLAGS)   -lgtest -lpthread -o t 
