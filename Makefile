@@ -58,4 +58,4 @@ crt0.o:crt0.asm
 	nasm -f elf crt0.asm
 
 test:$(OBJS)
-	$(CXX)   $(OBJS) $(LDFLAGS)  -lgtest -lpthread -o t
+	$(CXX)  -DDEBUG[=def] $(OBJS) $(LDFLAGS)   -lgtest -lpthread -o t 
