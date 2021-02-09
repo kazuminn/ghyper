@@ -84,15 +84,17 @@ void Emulator::evacuateRegister(sig_ucontext_t* uc){
 }
 
 void Emulator::returnRegister(sig_ucontext_t* uc){
-	__asm("mov %0, %%esi" : : "r"(ESI) : "%eax", "%ebx", "%ecx", "%edx", "%edi");
-	__asm("mov %0, %%edi" : : "r"(EDI) : "%eax", "%ebx", "%ecx", "%edx", "%esi");
-	__asm("mov %0, %%ebp" : : "r"(EBP) : "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi");
-	__asm("mov %0, %%ebx" : : "r"(EBX) : "%eax", "%ecx", "%edx", "%esi", "%edi");
-	__asm("mov %0, %%edx" : : "r"(EDX) : "%eax", "%ebx", "%ecx", "%esi", "%edi");
-	__asm("mov %0, %%eax" : : "r"(EAX) : "%ebx", "%ecx", "%edx", "%esi", "%edi");
-	__asm("mov %0, %%ecx" : : "r"(ECX) : "%eax", "%ebx", "%edx", "%esi", "%edi");
-	__asm("mov %0, %%esp" : : "r"(ESP) : "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi");
-	__asm("push %0 ; popf" : : "r"(eeflags) : "%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi");
+	/*
+	__asm("mov %0, %%esi" : : "r"(ESI) : );
+	__asm("mov %0, %%edi" : : "r"(EDI) : );
+	__asm("mov %0, %%ebp" : : "r"(EBP) : );
+	__asm("mov %0, %%ebx" : : "r"(EBX) : );
+	__asm("mov %0, %%edx" : : "r"(EDX) : );
+	__asm("mov %0, %%eax" : : "r"(EAX) : );
+	__asm("mov %0, %%ecx" : : "r"(ECX) : );
+	__asm("mov %0, %%esp" : : "r"(ESP) : );
+	__asm("push %0 ; popf" : : "r"(eeflags) : );
+	*/
 }
 
 

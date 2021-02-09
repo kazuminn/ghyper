@@ -20,6 +20,21 @@ void push_es(Emulator *emu, sig_ucontext_t* uc){
 	uc->uc_mcontext.rip++;
 }
 */
+void push_r32(Emulator *emu, sig_ucontext_t* uc){
+
+	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
+	uint8_t reg = *pc & ((1<<3)-1);
+	emu->memory[emu->ESP] = emu->GetRegister32(reg);
+	uc->uc_mcontext.rip++; 
+}
+
+void pop_r32(Emulator *emu, sig_ucontext_t* uc){
+
+	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
+	uint8_t reg = *pc & ((1<<3)-1);
+	emu->SetRegister32(reg, emu->memory[emu->ESP]);
+	uc->uc_mcontext.rip++; 
+}
 
 void mov_rm32_imm32(Emulator *emu, sig_ucontext_t* uc){
 	uc->uc_mcontext.rip++; 
@@ -1183,5 +1198,7 @@ void InitHInstructions16(){
 	func[0xc7] = mov_rm32_imm32;
 	func[0x89] = mov_rm32_r32;
 	func[0xA0] = mov_al_moffs8;
+	for (int i =0; i< 8; i++) func[0x50+i] = push_r32;
+	for (int i =0; i< 8; i++) func[0x58+i] = pop_r32;
 }
 

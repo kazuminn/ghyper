@@ -74,8 +74,6 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 
 		hinstruction_func_t* func;
 		uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
-		uint32_t * rsp = (uint32_t *)uc->uc_mcontext.rsp;
-		////////////////printf("rsp: %lx\n", *rsp);
 		printf("opecode : %x\n", *pc);
 		printf("opecode : %x\n", *(pc + 1));
 		printf("rip: %p\n", (void *)uc->uc_mcontext.rip);
@@ -93,6 +91,7 @@ void trap(int sig_num, siginfo_t * info, void * ucontext){
 #endif
 
 
+		printf("address : %lx\n", pc - emu->memory - 0x28001b);
 		if(func == NULL){
 			cout<<"命令("<<showbase<<__builtin_bswap64(*pc)<<")は実装されていません。"<<endl;
 			exit(1);
@@ -129,13 +128,20 @@ void *thread_hv(void *arg){
 		sigact.sa_flags = SA_RESTART | SA_SIGINFO | SA_NODEFER | SA_ONSTACK;
 		int rc = sigaction(SIGILL, &sigact, (struct sigaction *)NULL);
 		int sc = sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL);
+		printf("hoge : %lx\n", emu->memory + emu->EIP);
 
-		void *addr = alloca(16384 + 0x4000); 
-		__asm("jmpq %0"
-			  :
-			  : "r"(emu->memory + emu->EIP)
-			  : 
-			  );
+		//void *addr = alloca(16384); 
+	#ifdef DEBUG
+		typedef int (*jit)(void);
+		jit func = (jit)emu->memory;
+		func();
+	/*
+	_pc((uintptr_t)emu->memory, 0x7c00);
+	*/
+	#else
+		__asm("jmpq %0" : : "r"((uintptr_t)emu->memory + emu->EIP) : );
+	#endif
+
 }
 
 int Ghyper::hv(uint8_t asmb[11]) {
@@ -154,9 +160,8 @@ int Ghyper::hv(uint8_t asmb[11]) {
 
 
 	#ifdef DEBUG
-	    	typedef int (*x64_jit_func)(void);
-	        x64_jit_func func = (x64_jit_func)asmb;
-			func();
+			emu->memory = asmb;
+			emu->EIP = 0;
 	#else
     	emu->LoadBinary("/home/a/haribote/harib27f/haribote.img", 0x7c00, 1024 * 1024 * 1024);
 
@@ -182,6 +187,7 @@ int Ghyper::hv(uint8_t asmb[11]) {
     	emu->SetMemory16(0xff6, 200);
 		emu->SetMemory32(0xff8, 0xa0000);
         // end 16bit -------------------------------------------------------------
+	#endif
 
 
 		printf("emu->memory : %p \n", emu->memory);
@@ -199,7 +205,7 @@ int Ghyper::hv(uint8_t asmb[11]) {
 		if (ret != 0)
 		        handle_error_en(ret, "attar");
 		
-		ret = pthread_attr_setstacksize(&tattr, 16384 + 0x4000);
+		ret = pthread_attr_setstacksize(&tattr, 16384 );
 		
 		if (ret != 0)
 		        handle_error_en(ret, "size");
@@ -216,6 +222,5 @@ int Ghyper::hv(uint8_t asmb[11]) {
 		        handle_error_en(ret, "join");
 		
 		
-	#endif
 	    return (0);	
 }
