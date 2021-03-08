@@ -72,6 +72,7 @@ int Emulator::parse_prefix(Emulator *emu,  sig_ucontext_t* uc){
 	return -1;
 }
 void Emulator::evacuateRegister(sig_ucontext_t* uc){
+	/*
 	ESI = uc->uc_mcontext.rsi & 0xFFFFFFFF;
 	EDI = uc->uc_mcontext.rdi & 0xFFFFFFFF;
 	EBP = uc->uc_mcontext.rbp & 0xFFFFFFFF;
@@ -81,6 +82,20 @@ void Emulator::evacuateRegister(sig_ucontext_t* uc){
 	ECX = uc->uc_mcontext.rcx & 0xFFFFFFFF;
 	ESP = uc->uc_mcontext.rsp & 0xFFFFFFFF;
 	eeflags = uc->uc_mcontext.eflags;
+#ifdef DEBUG 
+	printf("before---------------------------------\n");
+	printf("ESI : %d\n",ESI);
+	printf("EDI : %d\n",EDI);
+	printf("EBP : %d\n",EBP);
+	printf("EBX : %d\n",EBX);
+	printf("EDX : %d\n",EDX);
+	printf("EAX : %d\n",EAX);
+	printf("ECX : %d\n",ECX);
+	printf("ESP : %d\n",ESP);
+	printf("eflags : %d\n",eeflags);
+	printf("before---------------------------------\n");
+#endif
+*/
 }
 
 void Emulator::returnRegister(sig_ucontext_t* uc){
@@ -95,6 +110,18 @@ void Emulator::returnRegister(sig_ucontext_t* uc){
 	__asm("mov %0, %%esp" : : "r"(ESP) : );
 	__asm("push %0 ; popf" : : "r"(eeflags) : );
 	*/
+#ifdef DEBUG 
+	printf("after---------------------------------\n");
+	printf("ESI : %d\n",ESI);
+	printf("EDI : %d\n",EDI);
+	printf("EBP : %d\n",EBP);
+	printf("EBX : %d\n",EBX);
+	printf("EDX : %d\n",EDX);
+	printf("EAX : %d\n",EAX);
+	printf("ECX : %d\n",ECX);
+	printf("ESP : %d\n",ESP);
+	printf("eflags : %d\n",eeflags);
+#endif
 }
 
 

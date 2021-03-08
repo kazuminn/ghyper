@@ -130,21 +130,21 @@ void *thread_hv(void *arg){
 		int sc = sigaction(SIGSEGV, &sigact, (struct sigaction *)NULL);
 		printf("hoge : %lx\n", emu->memory + emu->EIP);
 
-		//void *addr = alloca(16384); 
 	#ifdef DEBUG
+	/*
 		typedef int (*jit)(void);
 		jit func = (jit)emu->memory;
 		func();
-	/*
-	_pc((uintptr_t)emu->memory, 0x7c00);
 	*/
+	_pc((uintptr_t)emu->memory, 0x7c00);
 	#else
+		void *addr = alloca(16384); 
 		__asm("jmpq %0" : : "r"((uintptr_t)emu->memory + emu->EIP) : );
 	#endif
 
 }
 
-int Ghyper::hv(uint8_t asmb[11]) {
+int Ghyper::hv(uint8_t asmb[15]) {
 
         cout << "プロセス生成" << endl;
 

@@ -18,7 +18,7 @@ CC	= gcc
 CXX	= g++
 
 %.o:%.cpp
-	$(CXX) -DDEBUG -o $@ -c $< $(CFLAGS)
+	$(CXX) -DPRINT -o $@ -c $< $(CFLAGS)
 
 %.bin:%.nask
 	$(NASK) $< $@ $*.lst

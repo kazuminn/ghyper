@@ -5,7 +5,7 @@
 class Ghyper{
 
 public: 
-int hv(uint8_t asmb[11]);
+int hv(uint8_t asmb[15]);
 };
 
 #endif //GHYPER_H_

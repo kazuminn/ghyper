@@ -20,19 +20,49 @@ void push_es(Emulator *emu, sig_ucontext_t* uc){
 	uc->uc_mcontext.rip++;
 }
 */
+
+/*
+void mov_r32_rm32(Emulator *emu){
+	emu->EIP++;
+	ModRM modrm(emu);
+	uint32_t rm32 = modrm.GetRM32();
+	modrm.SetR32(rm32);
+}
+*/
+void mov_r32_rm32(Emulator *emu, sig_ucontext_t* uc){
+	uc->uc_mcontext.rip++; 
+
+	ModRM modrm(emu, uc);
+	emu->instr.opecode  = *(uint8_t *)uc->uc_mcontext.rip;
+	modrm.SetR32(modrm.GetRM32());		
+}
+
+void mov_r32_imm32(Emulator *emu, sig_ucontext_t* uc){
+	uc->uc_mcontext.rip++; 
+
+	ModRM modrm(emu, uc);
+	emu->instr.opecode  = *(uint8_t *)uc->uc_mcontext.rip;
+	uint8_t *pc  = (uint8_t *)uc->uc_mcontext.rip;
+	uint32_t imm32 = *pc + (*(pc + 1) << 8) + (*(pc + 1) << 16) + (*(pc + 1) << 24);
+	modrm.SetR32(imm32);		
+	uc->uc_mcontext.rip = uc->uc_mcontext.rip + 4;
+}
+
 void push_r32(Emulator *emu, sig_ucontext_t* uc){
 
 	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
 	uint8_t reg = *pc & ((1<<3)-1);
 	emu->memory[emu->ESP] = emu->GetRegister32(reg);
+	emu->ESP = emu->ESP - 4;
 	uc->uc_mcontext.rip++; 
 }
 
 void pop_r32(Emulator *emu, sig_ucontext_t* uc){
 
-	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
+	uint8_t *pc = (uint8_t *)uc->uc_mcontext.rip;
 	uint8_t reg = *pc & ((1<<3)-1);
 	emu->SetRegister32(reg, emu->memory[emu->ESP]);
+	emu->ESP = emu->ESP + 4;
 	uc->uc_mcontext.rip++; 
 }
 
@@ -40,7 +70,8 @@ void mov_rm32_imm32(Emulator *emu, sig_ucontext_t* uc){
 	uc->uc_mcontext.rip++; 
 
 	ModRM modrm(emu, uc);
-	uint8_t * pc = (uint8_t *)uc->uc_mcontext.rip;
+	emu->instr.opecode  = *(uint8_t *)uc->uc_mcontext.rip;
+	uint8_t *pc  = (uint8_t *)uc->uc_mcontext.rip;
 	uint32_t imm32 = *pc + (*(pc + 1) << 8) + (*(pc + 1) << 16) + (*(pc + 1) << 24);
 	modrm.SetRM32(imm32);		
 	uc->uc_mcontext.rip = uc->uc_mcontext.rip + 4;
@@ -52,15 +83,21 @@ void nop(Emulator *emu, sig_ucontext_t* uc){
 
 void mov_al_moffs8(Emulator *emu, sig_ucontext_t* uc){
 	uc->uc_mcontext.rip++; 
-	uc->uc_mcontext.rip++; 
-	uc->uc_mcontext.rip++; 
-	uc->uc_mcontext.rip++; 
-	uc->uc_mcontext.rip++; 
+	uint8_t moffs = 
+	uc->uc_mcontext.rip = uc->uc_mcontext.rip + 4; 
 }
+
+/*
+void mov_al_moffs8(Emulator *emu) {
+	emu->EIP++;
+	uint8_t moffs = emu->memory[emu->sgregs[1].base + emu->GetSignCode32(0)];
+	emu->AL = moffs;
+	emu->EAX = (emu->EAX & ~0xff) | emu->AL;
+	emu->EIP += 4;
+}*/
 
 void mov_rm32_r32(Emulator *emu, sig_ucontext_t* uc){	//cout<<"mov2"<<endl;
 	uc->uc_mcontext.rip++; 
-	
 	emu->instr.opecode = *(uint8_t *)uc->uc_mcontext.rip;
 	ModRM modrm(emu, uc);
 	uint32_t r32 = modrm.GetR32();
@@ -213,12 +250,6 @@ void sti(Emulator *emu){
 	emu->EIP++;
 }
 
-void mov_r32_rm32(Emulator *emu){
-	emu->EIP++;
-	ModRM modrm(emu);
-	uint32_t rm32 = modrm.GetRM32();
-	modrm.SetR32(rm32);
-}
 
 void inc_r32(Emulator *emu){
 	uint8_t reg = emu->GetCode8(0) - 0x40;
@@ -233,13 +264,6 @@ void lea_r32_m32(Emulator *emu){
     modrm.SetR32(m32);
 }
 
-void mov_al_moffs8(Emulator *emu) {
-	emu->EIP++;
-	uint8_t moffs = emu->memory[emu->sgregs[1].base + emu->GetSignCode32(0)];
-	emu->AL = moffs;
-	emu->EAX = (emu->EAX & ~0xff) | emu->AL;
-	emu->EIP += 4;
-}
 
 
 void add_rm32_imm8(Emulator *emu, ModRM *modrm){
@@ -715,19 +739,6 @@ void code_0f01(Emulator *emu){
 	delete modrm;
 }
 
-void push_r32(Emulator *emu){
-	uint8_t reg = emu->GetCode8(0) & ((1<<3)-1);
-	emu->Push32(emu->GetRegister32(reg));
-	emu->EIP++;
-}
-
-void pop_r32(Emulator *emu){
-	uint8_t reg = emu->GetCode8(0) & ((1<<3)-1);
-	uint32_t val = emu->Pop32();
-	printf("%x \n", val);
-	emu->SetRegister32(reg, val);
-	emu->EIP++;
-}
 
 void push_imm8(Emulator *emu){
 	uint32_t val = emu->GetCode8(1);
@@ -1195,10 +1206,12 @@ using namespace hinstruction16;
 void InitHInstructions16(){
 	hinstruction_func_t** func = hinstructions16;
 
-	func[0xc7] = mov_rm32_imm32;
-	func[0x89] = mov_rm32_r32;
-	func[0xA0] = mov_al_moffs8;
 	for (int i =0; i< 8; i++) func[0x50+i] = push_r32;
 	for (int i =0; i< 8; i++) func[0x58+i] = pop_r32;
+	func[0x89] = mov_rm32_r32;
+	func[0x8B] = mov_r32_rm32;
+	func[0xA0] = mov_al_moffs8;
+	for (int i =0; i< 8; i++) func[0xb8+i] = mov_r32_imm32;
+	func[0xc7] = mov_rm32_imm32;
 }
 
